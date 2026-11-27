@@ -1,15 +1,28 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-primary sticky-top shadow-sm">
   <div class="container">
     <a class="navbar-brand fw-semibold" routerLink="/" (click)="cerrarMenu()">Spa Serenidad</a>
-    <button class="navbar-toggler" type="button" (click)="menuAbierto.set(!menuAbierto())"
-            aria-controls="menuPrincipal" [attr.aria-expanded]="menuAbierto()" aria-label="Abrir menú">
+    <button
+      class="navbar-toggler"
+      type="button"
+      (click)="menuAbierto.set(!menuAbierto())"
+      aria-controls="menuPrincipal"
+      [attr.aria-expanded]="menuAbierto()"
+      aria-label="Abrir menú"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="menuPrincipal" [class.show]="menuAbierto()">
       <ul class="navbar-nav ms-auto">
         @for (item of menu; track item.ruta) {
           <li class="nav-item">
-            <a class="nav-link" [routerLink]="item.ruta" (click)="cerrarMenu()" routerLinkActive="active fw-semibold" ariaCurrentWhenActive="page">{{ item.texto }}</a>
+            <a
+              class="nav-link"
+              [routerLink]="item.ruta"
+              (click)="cerrarMenu()"
+              routerLinkActive="active fw-semibold"
+              ariaCurrentWhenActive="page"
+              >{{ item.texto }}</a
+            >
           </li>
         }
       </ul>

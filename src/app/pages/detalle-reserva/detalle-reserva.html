@@ -1,9 +1,15 @@
 @if (estadoCarga() === 'cargando') {
   <div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>
+} @else if (estadoCarga() === 'error') {
+  <div role="alert" class="alert alert-danger">
+    {{ error() }} <a routerLink="/reservas">Volver al historial</a>
+  </div>
 } @else if (estadoCarga() === 'no-existe') {
   <div class="alert alert-warning">
     <h1 class="h5">Reserva no encontrada</h1>
-    <p>No existe una reserva con el identificador <strong>{{ idBuscado() }}</strong>.</p>
+    <p>
+      No existe una reserva con el identificador <strong>{{ idBuscado() }}</strong>.
+    </p>
     <a routerLink="/reservas" class="btn btn-primary">Volver al historial</a>
   </div>
 } @else if (reserva(); as r) {
@@ -17,18 +23,26 @@
   @if (mensaje()) {
     <div class="alert alert-success d-flex justify-content-between align-items-start">
       <span>{{ mensaje() }}</span>
-      <button type="button" class="btn-close" aria-label="Cerrar" (click)="mensaje.set('')"></button>
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Cerrar"
+        (click)="mensaje.set('')"
+      ></button>
     </div>
   }
   @if (error()) {
     <div class="alert alert-danger">{{ error() }}</div>
   }
 
-  <div class="card shadow-sm" [ngClass]="{
-    'border-success': r.estado === 'confirmada',
-    'border-secondary opacity-75': r.estado === 'cancelada',
-    'border-info': r.estado === 'atendida'
-  }">
+  <div
+    class="card shadow-sm"
+    [ngClass]="{
+      'border-success': r.estado === 'confirmada',
+      'border-secondary opacity-75': r.estado === 'cancelada',
+      'border-info': r.estado === 'atendida',
+    }"
+  >
     <div class="card-header d-flex justify-content-between align-items-center">
       <span class="fw-semibold">Reserva #{{ r.id }}</span>
       <app-estado-badge [estado]="r.estado" />
@@ -38,9 +52,9 @@
         <dt class="col-sm-4">Servicio</dt>
         <dd class="col-sm-8">{{ r.servicioNombre | titlecase }}</dd>
         <dt class="col-sm-4">Cita</dt>
-        <dd class="col-sm-8">{{ r.fechaCita | date:'fullDate' }} · {{ r.horaCita }}</dd>
+        <dd class="col-sm-8">{{ r.fechaCita | date: 'fullDate' }} · {{ r.horaCita }}</dd>
         <dt class="col-sm-4">Precio</dt>
-        <dd class="col-sm-8">{{ r.precio | currency:'BOB':'symbol-narrow' }}</dd>
+        <dd class="col-sm-8">{{ r.precio | currency: 'BOB' : 'symbol-narrow' }}</dd>
         <dt class="col-sm-4">Cliente</dt>
         <dd class="col-sm-8">{{ r.cliente | titlecase }}</dd>
         <dt class="col-sm-4">Correo</dt>
@@ -52,23 +66,44 @@
           <dd class="col-sm-8">{{ r.notas }}</dd>
         }
         <dt class="col-sm-4">Registrada</dt>
-        <dd class="col-sm-8">{{ r.creadaEn | date:'medium' }}</dd>
+        <dd class="col-sm-8">{{ r.creadaEn | date: 'medium' }}</dd>
         @if (r.actualizadaEn) {
           <dt class="col-sm-4">Última actualización</dt>
-          <dd class="col-sm-8">{{ r.actualizadaEn | date:'medium' }}</dd>
+          <dd class="col-sm-8">{{ r.actualizadaEn | date: 'medium' }}</dd>
         }
       </dl>
     </div>
     <div class="card-footer">
       @if (r.estado === 'confirmada') {
         <div class="d-flex flex-column flex-sm-row gap-2">
-          <button type="button" class="btn btn-danger" [disabled]="procesando()" (click)="cancelar()">Cancelar reserva</button>
-          <button type="button" class="btn btn-outline-success" [disabled]="procesando()" (click)="marcarAtendida()">Marcar como atendida</button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            [disabled]="procesando()"
+            (click)="cancelar()"
+          >
+            Cancelar reserva
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-success"
+            [disabled]="procesando()"
+            (click)="marcarAtendida()"
+          >
+            Marcar como atendida
+          </button>
         </div>
       } @else {
-        <p class="text-muted mb-2">Esta reserva ya está <strong>{{ r.estado }}</strong>; no admite más cambios.</p>
+        <p class="text-muted mb-2">
+          Esta reserva ya está <strong>{{ r.estado }}</strong>; no admite más cambios.
+        </p>
         @if (r.estado === 'cancelada') {
-          <a class="btn btn-outline-primary btn-sm" routerLink="/reservar" [queryParams]="{ servicio: r.servicioId }">Reservar de nuevo este servicio</a>
+          <a
+            class="btn btn-outline-primary btn-sm"
+            routerLink="/reservar"
+            [queryParams]="{ servicio: r.servicioId }"
+            >Reservar de nuevo este servicio</a
+          >
         }
       }
     </div>

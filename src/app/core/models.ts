@@ -16,26 +16,26 @@ export interface Servicio {
 export interface Horario {
   id: number;
   servicioId: number;
-  fecha: string;      // 'YYYY-MM-DD'
-  hora: string;       // 'HH:mm'
+  fecha: string; // 'YYYY-MM-DD'
+  hora: string; // 'HH:mm'
   disponible: boolean;
 }
 
 export interface Reserva {
-  id?: number;              // lo asigna IndexedDB (autoIncrement)
+  id?: number; // lo asigna IndexedDB (autoIncrement)
   servicioId: number;
   servicioNombre: string;
   precio: number;
   horarioId: number;
-  fechaCita: string;        // 'YYYY-MM-DD'
-  horaCita: string;         // 'HH:mm'
+  fechaCita: string; // 'YYYY-MM-DD'
+  horaCita: string; // 'HH:mm'
   cliente: string;
   email: string;
   telefono: string;
   notas: string;
   estado: EstadoReserva;
-  creadaEn: string;         // ISO
-  actualizadaEn?: string;   // ISO
+  creadaEn: string; // ISO
+  actualizadaEn?: string; // ISO
 }
 
 export interface NuevaReservaDatos {

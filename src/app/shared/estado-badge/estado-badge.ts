@@ -6,11 +6,15 @@ import { EstadoReserva } from '../../core/models';
   selector: 'app-estado-badge',
   imports: [NgClass, TitleCasePipe],
   template: `
-    <span class="badge" [ngClass]="{
-      'text-bg-success': estado() === 'confirmada',
-      'text-bg-secondary': estado() === 'cancelada',
-      'text-bg-info': estado() === 'atendida'
-    }">{{ estado() | titlecase }}</span>
+    <span
+      class="badge"
+      [ngClass]="{
+        'text-bg-success': estado() === 'confirmada',
+        'text-bg-secondary': estado() === 'cancelada',
+        'text-bg-info': estado() === 'atendida',
+      }"
+      >{{ estado() | titlecase }}</span
+    >
   `,
 })
 export class EstadoBadge {

@@ -14,13 +14,26 @@ export function fechaManana(): string {
   return fechaISO(d);
 }
 
-/** Regla del spa: reservar con al menos 1 día de anticipación */
-export const fechaDesdeManana: ValidatorFn = (control) =>
-  !control.value || control.value >= fechaManana() ? null : { fechaPasada: true };
+/** Rechaza fechas inexistentes y formatos diferentes de YYYY-MM-DD. */
+export function fechaValida(valor: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(valor)) return false;
+  const [a, m, d] = valor.split('-').map(Number);
+  return fechaISO(new Date(a, m - 1, d)) === valor;
+}
 
-/** Regla del spa: domingos cerrado */
-export const noDomingo: ValidatorFn = (control) => {
+export const fechaDesdeManana: ValidatorFn = (control) => {
   if (!control.value) return null;
+  if (!fechaValida(control.value)) return { fechaInvalida: true };
+  return control.value >= fechaManana() ? null : { fechaPasada: true };
+};
+
+export const noDomingo: ValidatorFn = (control) => {
+  if (!control.value || !fechaValida(control.value)) return null;
   const [a, m, d] = String(control.value).split('-').map(Number);
   return new Date(a, m - 1, d).getDay() === 0 ? { domingo: true } : null;
+};
+
+export const nombreValido: ValidatorFn = (control) => {
+  const nombre = String(control.value ?? '').trim();
+  return nombre.length >= 3 && nombre.length <= 60 ? null : { nombreInvalido: true };
 };

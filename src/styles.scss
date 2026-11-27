@@ -2,3 +2,24 @@ body { background: #f6f8f7; color: #223d36; }
 app-root { min-height: 100vh; display: flex; flex-direction: column; }
 main { flex: 1; }
 tr.cursor-pointer { cursor: pointer; }
+
+:root { --spa-acento: #285c4d; }
+.navbar.bg-primary { background-color: var(--spa-acento) !important; }
+.btn-primary { --bs-btn-bg: #285c4d; --bs-btn-border-color: #285c4d; --bs-btn-hover-bg: #1d473b; --bs-btn-hover-border-color: #1d473b; --bs-btn-active-bg: #173b31; --bs-btn-active-border-color: #173b31; --bs-btn-disabled-bg: #285c4d; --bs-btn-disabled-border-color: #285c4d; }
+.btn-outline-primary { --bs-btn-color: #285c4d; --bs-btn-border-color: #285c4d; --bs-btn-hover-bg: #285c4d; --bs-btn-hover-border-color: #285c4d; }
+.card { border-color: #dce6e1; border-radius: 1rem; }
+h1, h2, h3 { letter-spacing: -.025em; }
+.card-title { letter-spacing: 0; }
+.form-control:focus, .form-select:focus { border-color: #47846f; box-shadow: 0 0 0 .2rem #285c4d26; }
+.table-responsive { border-radius: .75rem; }
+td, dd { overflow-wrap: anywhere; }
+a, button, input, select, textarea { scroll-margin-top: 5rem; }
+:focus-visible { outline: 3px solid #b37518; outline-offset: 3px; }
+@media (max-width: 575.98px) {
+  main.container { padding-inline: 1rem; }
+  h1 { font-size: 1.75rem; }
+  .card-body { padding: 1.15rem; }
+  .btn { min-height: 44px; }
+  .navbar .nav-link { padding-block: .75rem; }
+  .table { min-width: 480px; }
+}

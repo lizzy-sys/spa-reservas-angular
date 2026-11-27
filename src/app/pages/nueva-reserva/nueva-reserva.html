@@ -1,1 +1,119 @@
-<h1>Nueva reserva</h1>
+<h1 class="h3 mb-3">Nueva reserva</h1>
+
+<div class="row g-4">
+  <div class="col-12 col-lg-8">
+    <form [formGroup]="form" (ngSubmit)="guardar()" novalidate class="card card-body shadow-sm">
+      @if (errorGuardado()) {
+        <div class="alert alert-danger">{{ errorGuardado() }}</div>
+      }
+      @if (form.invalid && form.touched) {
+        <div class="alert alert-warning py-2 small">Revisa los campos marcados en rojo.</div>
+      }
+
+      <!-- Servicio -->
+      <div class="mb-3">
+        <label class="form-label" for="servicio">Servicio *</label>
+        <select id="servicio" class="form-select" formControlName="servicioId" [class.is-invalid]="invalido('servicioId')">
+          <option [ngValue]="0" disabled>Selecciona un servicio</option>
+          @for (s of servicios(); track s.id) {
+            <option [ngValue]="s.id">{{ s.nombre | titlecase }} — {{ s.precio | currency:'BOB':'symbol-narrow' }}</option>
+          }
+        </select>
+        <div class="invalid-feedback">Selecciona un servicio.</div>
+      </div>
+
+      <!-- Fecha y horario -->
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="fecha">Fecha *</label>
+          <input id="fecha" type="date" class="form-control" formControlName="fecha"
+                 [min]="fechaMinima" [class.is-invalid]="invalido('fecha')">
+          <div class="invalid-feedback">
+            @if (form.controls.fecha.hasError('required')) { La fecha es obligatoria. }
+            @else if (form.controls.fecha.hasError('fechaPasada')) { Debes reservar con al menos un día de anticipación. }
+            @else if (form.controls.fecha.hasError('domingo')) { Los domingos el spa está cerrado. }
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="horario">Horario disponible *</label>
+          <select id="horario" class="form-select" formControlName="horarioId" [class.is-invalid]="invalido('horarioId')">
+            <option [ngValue]="0" disabled>Selecciona un horario</option>
+            @for (h of horarios(); track h.id) {
+              <option [ngValue]="h.id">{{ h.hora }}</option>
+            }
+          </select>
+          @if (form.controls.servicioId.value > 0 && form.controls.fecha.valid && horarios().length === 0) {
+            <div class="form-text text-danger">No quedan horarios libres para esa fecha.</div>
+          }
+          <div class="invalid-feedback">Selecciona un horario disponible.</div>
+        </div>
+      </div>
+
+      <!-- Cliente -->
+      <div class="mb-3">
+        <label class="form-label" for="cliente">Nombre completo *</label>
+        <input id="cliente" class="form-control" formControlName="cliente" [class.is-invalid]="invalido('cliente')">
+        <div class="invalid-feedback">
+          @if (form.controls.cliente.hasError('required')) { El nombre es obligatorio. }
+          @else if (form.controls.cliente.hasError('minlength')) { Mínimo 3 caracteres. }
+          @else { Máximo 60 caracteres. }
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="email">Correo electrónico *</label>
+          <input id="email" type="email" class="form-control" formControlName="email" [class.is-invalid]="invalido('email')">
+          <div class="invalid-feedback">
+            @if (form.controls.email.hasError('required')) { El correo es obligatorio. }
+            @else { Ingresa un correo válido (ej. nombre&#64;correo.com). }
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="telefono">Celular *</label>
+          <input id="telefono" type="tel" inputmode="numeric" class="form-control" formControlName="telefono"
+                 placeholder="71234567" [class.is-invalid]="invalido('telefono')">
+          <div class="invalid-feedback">Ingresa un celular de 8 dígitos que empiece con 6 o 7.</div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="notas">Notas (opcional)</label>
+        <textarea id="notas" rows="3" class="form-control" formControlName="notas" [class.is-invalid]="invalido('notas')"></textarea>
+        <div class="form-text">{{ form.controls.notas.value.length }}/200</div>
+        <div class="invalid-feedback">Máximo 200 caracteres.</div>
+      </div>
+
+      <div class="d-flex flex-column flex-sm-row gap-2">
+        <button type="submit" class="btn btn-primary" [disabled]="guardando()">
+          @if (guardando()) { <span class="spinner-border spinner-border-sm me-1"></span> }
+          Confirmar reserva
+        </button>
+        <a routerLink="/servicios" class="btn btn-outline-secondary">Volver a servicios</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Resumen -->
+  <div class="col-12 col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">Resumen</div>
+      <div class="card-body">
+        @if (servicioActual(); as s) {
+          <p class="mb-1 fw-semibold">{{ s.nombre | titlecase }}</p>
+          <p class="mb-1 text-muted">{{ s.duracionMin }} min</p>
+          <p class="fs-5 mb-2">{{ s.precio | currency:'BOB':'symbol-narrow' }}</p>
+        } @else {
+          <p class="text-muted">Aún no elegiste un servicio.</p>
+        }
+        @if (form.controls.fecha.valid && form.controls.fecha.value) {
+          <p class="mb-0">{{ form.controls.fecha.value | date:'fullDate' }}</p>
+        }
+      </div>
+    </div>
+    <div class="alert alert-info small mt-3 mb-0">
+      <strong>Reglas del spa:</strong> reservas con 1 día de anticipación · domingos cerrado ·
+      un horario ocupado no se puede reservar · un mismo correo no puede reservar dos veces a la misma fecha y hora.
+    </div>
+  </div>
+</div>

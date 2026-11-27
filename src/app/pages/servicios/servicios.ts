@@ -16,6 +16,7 @@ export class Servicios implements OnInit {
 
   protected readonly categorias = CATEGORIAS;
   protected servicios = signal<Servicio[]>([]);
+  protected errorCarga = signal('');
   protected cargando = signal(true);
   protected busqueda = signal('');
   protected categoria = signal('todas');
@@ -31,8 +32,11 @@ export class Servicios implements OnInit {
   });
 
   async ngOnInit() {
-    this.servicios.set(await this.db.getServicios());
-    this.cargando.set(false);
+    this.errorCarga.set('');
+    this.cargando.set(true);
+    try { this.servicios.set(await this.db.getServicios()); }
+    catch { this.errorCarga.set('No se pudieron cargar los datos. Comprueba que IndexedDB esté habilitado.'); }
+    finally { this.cargando.set(false); }
   }
 
   /** Recibe el evento del hijo (output) */

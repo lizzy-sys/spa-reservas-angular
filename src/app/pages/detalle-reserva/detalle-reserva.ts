@@ -12,11 +12,12 @@ import { EstadoBadge } from '../../shared/estado-badge/estado-badge';
   templateUrl: './detalle-reserva.html',
 })
 export class DetalleReserva {
+  private solicitud = 0;
   private db = inject(SpaDb);
   private route = inject(ActivatedRoute);
 
   protected reserva = signal<Reserva | undefined>(undefined);
-  protected estadoCarga = signal<'cargando' | 'ok' | 'no-existe'>('cargando');
+  protected estadoCarga = signal<'cargando' | 'ok' | 'no-existe' | 'error'>('cargando');
   protected idBuscado = signal('');
   protected mensaje = signal('');
   protected error = signal('');
@@ -31,17 +32,27 @@ export class DetalleReserva {
   }
 
   private async cargar(idTexto: string) {
+    const solicitud = ++this.solicitud;
     this.idBuscado.set(idTexto);
     this.estadoCarga.set('cargando');
-    const id = Number(idTexto);
-    const r = Number.isInteger(id) && id > 0 ? await this.db.getReserva(id) : undefined;
-    this.reserva.set(r);
-    this.estadoCarga.set(r ? 'ok' : 'no-existe');
+    this.reserva.set(undefined);
+    this.error.set('');
+    try {
+      const id = Number(idTexto);
+      const r = /^[1-9]\d*$/.test(idTexto) && Number.isSafeInteger(id) ? await this.db.getReserva(id) : undefined;
+      if (solicitud !== this.solicitud) return;
+      this.reserva.set(r);
+      this.estadoCarga.set(r ? 'ok' : 'no-existe');
+    } catch {
+      if (solicitud !== this.solicitud) return;
+      this.error.set('No se pudo consultar la reserva. Recarga la página para reintentar.');
+      this.estadoCarga.set('error');
+    }
   }
 
   protected async cancelar() {
     const r = this.reserva();
-    if (!r || r.estado !== 'confirmada') return;
+    if (!r || r.estado !== 'confirmada' || this.procesando()) return;
     if (!confirm('¿Seguro que deseas cancelar esta reserva?')) return;
     const fecha = r.fechaCita.split('-').reverse().join('/');
     await this.ejecutar(
@@ -52,16 +63,20 @@ export class DetalleReserva {
 
   protected async marcarAtendida() {
     const r = this.reserva();
-    if (!r || r.estado !== 'confirmada') return;
+    if (!r || r.estado !== 'confirmada' || this.procesando()) return;
     await this.ejecutar(() => this.db.marcarAtendida(r.id!), 'La reserva fue marcada como atendida.');
   }
 
   private async ejecutar(accion: () => Promise<Reserva>, textoOk: string) {
+    if (this.procesando()) return;
+    const solicitud = this.solicitud;
     this.procesando.set(true);
     this.error.set('');
     this.mensaje.set('');
     try {
-      this.reserva.set(await accion());   // estado actualizado desde IndexedDB
+      const actualizada = await accion();
+      if (solicitud !== this.solicitud) return;
+      this.reserva.set(actualizada);
       this.mensaje.set(textoOk);
     } catch (e) {
       this.error.set((e as Error).message);

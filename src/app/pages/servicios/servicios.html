@@ -25,7 +25,9 @@
   </div>
 </div>
 
-@if (cargando()) {
+@if (errorCarga()) {
+  <div class="alert alert-danger" role="alert">{{ errorCarga() }} <button class="btn btn-outline-danger btn-sm" (click)="ngOnInit()">Reintentar</button></div>
+} @else if (cargando()) {
   <div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>
 } @else {
   <p class="text-muted small">{{ filtrados().length }} servicio(s) encontrado(s)</p>

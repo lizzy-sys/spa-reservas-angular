@@ -6,7 +6,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { merge } from 'rxjs';
 import { SpaDb } from '../../core/spa-db';
 import { Horario, Servicio } from '../../core/models';
-import { fechaDesdeManana, fechaManana, noDomingo } from '../../core/utilidades';
+import { fechaDesdeManana, fechaManana, noDomingo, nombreValido } from '../../core/utilidades';
 
 @Component({
   selector: 'app-nueva-reserva',
@@ -19,6 +19,8 @@ export class NuevaReserva implements OnInit {
   private route = inject(ActivatedRoute);
   private fb = inject(NonNullableFormBuilder);
 
+  private solicitudHorarios = 0;
+  protected cargandoHorarios = signal(false);
   protected servicios = signal<Servicio[]>([]);
   protected horarios = signal<Horario[]>([]);
   protected errorGuardado = signal('');
@@ -29,7 +31,7 @@ export class NuevaReserva implements OnInit {
     servicioId: [0, [Validators.min(1)]],
     fecha: ['', [Validators.required, fechaDesdeManana, noDomingo]],
     horarioId: [0, [Validators.min(1)]],
-    cliente: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
+    cliente: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60), nombreValido]],
     email: ['', [Validators.required, Validators.email]],
     telefono: ['', [Validators.required, Validators.pattern(/^[67]\d{7}$/)]],
     notas: ['', [Validators.maxLength(200)]],
@@ -43,7 +45,8 @@ export class NuevaReserva implements OnInit {
   }
 
   async ngOnInit() {
-    this.servicios.set(await this.db.getServicios());
+    try { this.servicios.set(await this.db.getServicios()); }
+    catch { this.errorGuardado.set("No se pudieron cargar los servicios. Recarga la página e intenta de nuevo."); return; }
     const desdeUrl = Number(this.route.snapshot.queryParamMap.get('servicio'));
     if (desdeUrl) this.form.controls.servicioId.setValue(desdeUrl);
   }
@@ -58,13 +61,25 @@ export class NuevaReserva implements OnInit {
   }
 
   private async cargarHorarios() {
+    const solicitud = ++this.solicitudHorarios;
     this.form.controls.horarioId.setValue(0);
+    this.horarios.set([]);
+    this.cargandoHorarios.set(false);
     const { servicioId, fecha } = this.form.getRawValue();
-    const valido = servicioId > 0 && !!fecha && this.form.controls.fecha.valid;
-    this.horarios.set(valido ? await this.db.getHorariosDisponibles(servicioId, fecha) : []);
+    if (servicioId <= 0 || !fecha || this.form.controls.fecha.invalid) return;
+    this.cargandoHorarios.set(true);
+    try {
+      const horarios = await this.db.getHorariosDisponibles(servicioId, fecha);
+      if (solicitud === this.solicitudHorarios) this.horarios.set(horarios);
+    } catch {
+      if (solicitud === this.solicitudHorarios) this.errorGuardado.set('No se pudieron cargar los horarios. Cambia la fecha para reintentar.');
+    } finally {
+      if (solicitud === this.solicitudHorarios) this.cargandoHorarios.set(false);
+    }
   }
 
   protected async guardar() {
+    if (this.guardando() || this.cargandoHorarios()) return;
     this.errorGuardado.set('');
     if (this.form.invalid) {           // impedir guardar datos inválidos
       this.form.markAllAsTouched();

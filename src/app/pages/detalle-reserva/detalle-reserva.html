@@ -1,5 +1,7 @@
 @if (estadoCarga() === 'cargando') {
   <div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>
+} @else if (estadoCarga() === 'error') {
+  <div role="alert" class="alert alert-danger">{{ error() }} <a routerLink="/reservas">Volver al historial</a></div>
 } @else if (estadoCarga() === 'no-existe') {
   <div class="alert alert-warning">
     <h1 class="h5">Reserva no encontrada</h1>

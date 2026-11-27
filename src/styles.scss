@@ -1,1 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
+body { background: #f6f8f7; color: #223d36; }
+app-root { min-height: 100vh; display: flex; flex-direction: column; }
+main { flex: 1; }
+tr.cursor-pointer { cursor: pointer; }

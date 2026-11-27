@@ -65,3 +65,9 @@ git push origin v1.0.0
 ```
 
 Crear Release desde la etiqueta. Añade capturas reales en `docs/capturas/` después de probar el navegador.
+
+## Publicación en GitHub Pages
+
+El workflow `.github/workflows/deploy-pages.yml` compila la aplicación para el subdirectorio del repositorio y publica al fusionar cambios en `main`. Tras fusionar la configuración, en GitHub abre **Settings → Pages → Build and deployment → Source**, selecciona **GitHub Actions**. Luego abre **Actions**, espera que termine “Publicar Spa Serenidad en GitHub Pages” y entra al enlace de Pages. La dirección esperada es https://lizzy-sys.github.io/spa-reservas-angular/.
+
+El workflow crea `404.html` para que Angular muestre su ruta 404 al visitar una ruta interna directamente. Pages publica un sitio estático; las reservas se guardan en IndexedDB del navegador de cada visitante y no se comparten con la autora.

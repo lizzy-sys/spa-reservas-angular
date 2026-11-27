@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
@@ -8,6 +8,8 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   styleUrl: './app.scss',
 })
 export class App {
+  protected menuAbierto = signal(false);
+  protected cerrarMenu() { this.menuAbierto.set(false); }
   protected readonly anio = new Date().getFullYear();
   protected readonly menu = [
     { ruta: '/servicios', texto: 'Servicios' },

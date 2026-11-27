@@ -21,15 +21,23 @@ export class Historial implements OnInit {
   protected estado = signal<'todas' | EstadoReserva>('todas');
 
   protected filtradas = computed(() =>
-    this.estado() === 'todas' ? this.reservas() : this.reservas().filter((r) => r.estado === this.estado())
+    this.estado() === 'todas'
+      ? this.reservas()
+      : this.reservas().filter((r) => r.estado === this.estado()),
   );
 
   async ngOnInit() {
     this.errorCarga.set('');
     this.cargando.set(true);
-    try { this.reservas.set(await this.db.getReservas()); }
-    catch { this.errorCarga.set('No se pudieron cargar los datos. Comprueba que IndexedDB esté habilitado.'); }
-    finally { this.cargando.set(false); }
+    try {
+      this.reservas.set(await this.db.getReservas());
+    } catch {
+      this.errorCarga.set(
+        'No se pudieron cargar los datos. Comprueba que IndexedDB esté habilitado.',
+      );
+    } finally {
+      this.cargando.set(false);
+    }
   }
 
   protected contar(e: EstadoReserva): number {

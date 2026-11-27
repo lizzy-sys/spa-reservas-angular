@@ -39,7 +39,10 @@ export class DetalleReserva {
     this.error.set('');
     try {
       const id = Number(idTexto);
-      const r = /^[1-9]\d*$/.test(idTexto) && Number.isSafeInteger(id) ? await this.db.getReserva(id) : undefined;
+      const r =
+        /^[1-9]\d*$/.test(idTexto) && Number.isSafeInteger(id)
+          ? await this.db.getReserva(id)
+          : undefined;
       if (solicitud !== this.solicitud) return;
       this.reserva.set(r);
       this.estadoCarga.set(r ? 'ok' : 'no-existe');
@@ -57,14 +60,17 @@ export class DetalleReserva {
     const fecha = r.fechaCita.split('-').reverse().join('/');
     await this.ejecutar(
       () => this.db.cancelarReserva(r.id!),
-      `Reserva cancelada. El horario del ${fecha} a las ${r.horaCita} vuelve a estar disponible.`
+      `Reserva cancelada. El horario del ${fecha} a las ${r.horaCita} vuelve a estar disponible.`,
     );
   }
 
   protected async marcarAtendida() {
     const r = this.reserva();
     if (!r || r.estado !== 'confirmada' || this.procesando()) return;
-    await this.ejecutar(() => this.db.marcarAtendida(r.id!), 'La reserva fue marcada como atendida.');
+    await this.ejecutar(
+      () => this.db.marcarAtendida(r.id!),
+      'La reserva fue marcada como atendida.',
+    );
   }
 
   private async ejecutar(accion: () => Promise<Reserva>, textoOk: string) {

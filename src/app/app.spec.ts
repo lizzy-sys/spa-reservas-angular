@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { App } from './app';
 describe('App', () => {
   it('muestra la marca y las tres rutas principales', async () => {
-    TestBed.configureTestingModule({imports: [App], providers: [provideRouter([])]});
+    TestBed.configureTestingModule({ imports: [App], providers: [provideRouter([])] });
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const root: HTMLElement = fixture.nativeElement;

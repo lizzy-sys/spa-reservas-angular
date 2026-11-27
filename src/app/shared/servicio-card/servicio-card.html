@@ -7,7 +7,7 @@
     <p class="card-text text-muted flex-grow-1">{{ servicio().descripcion }}</p>
     <p class="mb-3">
       <span class="text-muted">{{ servicio().duracionMin }} min</span> ·
-      <strong>{{ servicio().precio | currency:'BOB':'symbol-narrow' }}</strong>
+      <strong>{{ servicio().precio | currency: 'BOB' : 'symbol-narrow' }}</strong>
     </p>
     <button type="button" class="btn btn-primary w-100" (click)="reservar.emit(servicio())">
       Reservar

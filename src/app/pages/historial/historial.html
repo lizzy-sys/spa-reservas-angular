@@ -5,18 +5,31 @@
 
 <!-- Filtro por estado -->
 <div class="d-flex flex-wrap gap-2 mb-3">
-  <button type="button" class="btn btn-sm"
-          [ngClass]="estado() === 'todas' ? 'btn-dark' : 'btn-outline-dark'"
-          (click)="estado.set('todas')">Todas ({{ reservas().length }})</button>
+  <button
+    type="button"
+    class="btn btn-sm"
+    [ngClass]="estado() === 'todas' ? 'btn-dark' : 'btn-outline-dark'"
+    (click)="estado.set('todas')"
+  >
+    Todas ({{ reservas().length }})
+  </button>
   @for (e of estados; track e) {
-    <button type="button" class="btn btn-sm"
-            [ngClass]="estado() === e ? 'btn-primary' : 'btn-outline-primary'"
-            (click)="estado.set(e)">{{ e | titlecase }} ({{ contar(e) }})</button>
+    <button
+      type="button"
+      class="btn btn-sm"
+      [ngClass]="estado() === e ? 'btn-primary' : 'btn-outline-primary'"
+      (click)="estado.set(e)"
+    >
+      {{ e | titlecase }} ({{ contar(e) }})
+    </button>
   }
 </div>
 
 @if (errorCarga()) {
-  <div class="alert alert-danger" role="alert">{{ errorCarga() }} <button class="btn btn-outline-danger btn-sm" (click)="ngOnInit()">Reintentar</button></div>
+  <div class="alert alert-danger" role="alert">
+    {{ errorCarga() }}
+    <button class="btn btn-outline-danger btn-sm" (click)="ngOnInit()">Reintentar</button>
+  </div>
 } @else if (cargando()) {
   <div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>
 } @else {
@@ -36,16 +49,24 @@
         </thead>
         <tbody>
           @for (r of filtradas(); track r.id) {
-            <tr role="button" (click)="verDetalle(r.id!)" [ngClass]="{ 'text-muted': r.estado === 'cancelada' }">
+            <tr
+              role="button"
+              (click)="verDetalle(r.id!)"
+              [ngClass]="{ 'text-muted': r.estado === 'cancelada' }"
+            >
               <td>{{ r.id }}</td>
               <td>{{ r.servicioNombre | titlecase }}</td>
-              <td class="text-nowrap">{{ r.fechaCita | date:'dd/MM/yyyy' }} · {{ r.horaCita }}</td>
+              <td class="text-nowrap">{{ r.fechaCita | date: 'dd/MM/yyyy' }} · {{ r.horaCita }}</td>
               <td class="d-none d-md-table-cell">{{ r.cliente | titlecase }}</td>
               <td><app-estado-badge [estado]="r.estado" /></td>
-              <td class="d-none d-lg-table-cell">{{ r.creadaEn | date:'short' }}</td>
+              <td class="d-none d-lg-table-cell">{{ r.creadaEn | date: 'short' }}</td>
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-primary" [routerLink]="['/reservas', r.id]"
-                   (click)="$event.stopPropagation()">Ver</a>
+                <a
+                  class="btn btn-sm btn-outline-primary"
+                  [routerLink]="['/reservas', r.id]"
+                  (click)="$event.stopPropagation()"
+                  >Ver</a
+                >
               </td>
             </tr>
           } @empty {

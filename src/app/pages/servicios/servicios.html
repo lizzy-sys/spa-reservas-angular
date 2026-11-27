@@ -6,13 +6,23 @@
   <div class="row g-2">
     <div class="col-12 col-md-6">
       <label class="form-label small text-muted" for="buscar">Buscar</label>
-      <input id="buscar" type="search" class="form-control" placeholder="Nombre o descripción..."
-             [value]="busqueda()" (input)="busqueda.set($any($event.target).value)">
+      <input
+        id="buscar"
+        type="search"
+        class="form-control"
+        placeholder="Nombre o descripción..."
+        [value]="busqueda()"
+        (input)="busqueda.set($any($event.target).value)"
+      />
     </div>
     <div class="col-8 col-md-4">
       <label class="form-label small text-muted" for="categoria">Categoría</label>
-      <select id="categoria" class="form-select" [value]="categoria()"
-              (change)="categoria.set($any($event.target).value)">
+      <select
+        id="categoria"
+        class="form-select"
+        [value]="categoria()"
+        (change)="categoria.set($any($event.target).value)"
+      >
         <option value="todas">Todas</option>
         @for (c of categorias; track c) {
           <option [value]="c">{{ c | titlecase }}</option>
@@ -26,7 +36,10 @@
 </div>
 
 @if (errorCarga()) {
-  <div class="alert alert-danger" role="alert">{{ errorCarga() }} <button class="btn btn-outline-danger btn-sm" (click)="ngOnInit()">Reintentar</button></div>
+  <div class="alert alert-danger" role="alert">
+    {{ errorCarga() }}
+    <button class="btn btn-outline-danger btn-sm" (click)="ngOnInit()">Reintentar</button>
+  </div>
 } @else if (cargando()) {
   <div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>
 } @else {
@@ -38,7 +51,9 @@
       </div>
     } @empty {
       <div class="col-12">
-        <div class="alert alert-warning mb-0">No hay servicios que coincidan con la búsqueda y la categoría elegidas.</div>
+        <div class="alert alert-warning mb-0">
+          No hay servicios que coincidan con la búsqueda y la categoría elegidas.
+        </div>
       </div>
     }
   </div>

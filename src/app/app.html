@@ -1,1 +1,26 @@
-<main class="container py-5"><h1>Spa Serenidad</h1><p>Tu momento de bienestar.</p><button class="btn btn-primary">Próximamente: reservas</button></main>
+<nav class="navbar navbar-expand-md navbar-dark bg-primary sticky-top shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-semibold" routerLink="/">Spa Serenidad</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal"
+            aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menú">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menuPrincipal">
+      <ul class="navbar-nav ms-auto">
+        @for (item of menu; track item.ruta) {
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="item.ruta" routerLinkActive="active fw-semibold">{{ item.texto }}</a>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container py-4">
+  <router-outlet />
+</main>
+
+<footer class="border-top bg-white py-3 text-center text-muted small">
+  Spa Serenidad · {{ anio }} · Datos guardados localmente en IndexedDB
+</footer>
